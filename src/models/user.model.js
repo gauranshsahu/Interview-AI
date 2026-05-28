@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 
 
 const userSchema = new mongoose.Schema({
-    userName:{
+    username:{
         type:String,
         unique: [true,"username already taken"],
         required: true,
@@ -16,8 +16,10 @@ const userSchema = new mongoose.Schema({
 
     password:{
         type:String,
-        required:true,
+        required:true, 
     }
 })
 
 const userModel = mongoose.model("users",userSchema);
+
+module.exports = userModel; 
