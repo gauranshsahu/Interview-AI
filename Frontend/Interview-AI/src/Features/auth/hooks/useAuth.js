@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context";
 import { login, register, logout, getMe } from "../services/auth.api"
+import { useEffect } from "react";
 
 export const useAuth = () => {
     const context = useContext(AuthContext)
@@ -47,6 +48,32 @@ export const useAuth = () => {
             setLoading(false)
         }
     }
+
+
+// until the token is present in the cookies this function will redirect the user to the home page but if the token is not present then the user will redirect to login
+
+        useEffect(()=>{
+    
+            const getAndSetUser = async()=>{
+                    try{
+                        const data = await getMe()
+                        if(data && data.user){
+                            setUser(data.user)
+                        } else {
+                            setUser(null)
+                        }
+                    }
+                    catch(err){
+                        console.error("getMe error:", err)
+                        setUser(null)
+                    }
+                    finally{
+                        setLoading(false)
+                    }
+            }
+    
+            getAndSetUser()
+        },[])
 
     return { user, loading, handleRegister, handleLogin, handleLogout }
 }
