@@ -2,10 +2,15 @@ const { GoogleGenAI } = require("@google/genai");
 const { z } = require("zod");
 const { zodToJsonSchema } = require("zod-to-json-schema")
 
+const apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_GENAI_API_KEY
-})
+let ai = null;
+
+if (apiKey) {
+    ai = new GoogleGenAI({ apiKey });
+} else {
+    console.warn("Gemini API key is not configured. Set GOOGLE_GENAI_API_KEY or GEMINI_API_KEY in your .env file.");
+}
 
 // async function invokeGeminiAi() {
 //     const response = await ai.models.generateContent({
@@ -41,6 +46,9 @@ const interviewReportSchema = z.object({
 })
 
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
+    if (!ai) {
+        throw new Error("Gemini API is not configured. Please set GOOGLE_GENAI_API_KEY or GEMINI_API_KEY in the backend .env file.");
+    }
 
     const prompt = `Generate an interview report for a candidate with the following details:
                     Resume: ${resume}
@@ -48,7 +56,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                     Job Description: ${jobDescription}
     `
     const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.0-flash",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
