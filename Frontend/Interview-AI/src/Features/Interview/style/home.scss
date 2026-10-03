@@ -5,6 +5,13 @@
     width: 100%;
     min-height: 100vh;
 
+    .interview-input-group
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .left{
         background-color: red;
     }

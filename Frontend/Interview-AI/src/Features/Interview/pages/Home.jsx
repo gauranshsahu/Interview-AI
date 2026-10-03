@@ -3,6 +3,7 @@ import "../style/home.scss"
 const Home = () => {
   return (
     <main className='home'>
+      <div className="interview-input-group">
       <div className="left">
         <textarea name="jobDescription" id="jobDescription" placeholder="Enter job description here..."></textarea>
       </div>
@@ -16,6 +17,7 @@ const Home = () => {
             <textarea name="selfDescription" id="selfDescription" placeholder="Describe yourself in a few sentences..."></textarea>
         </div>
         <button className="generate-btn">Generate Interview Report</button>
+      </div>
       </div>
     </main>
   )
