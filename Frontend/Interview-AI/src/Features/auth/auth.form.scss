@@ -1,36 +1,222 @@
-main{
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap');
+
+$ink: #0d1117;
+$panel: #151b26;
+$field: #1b2332;
+$line: #2a3447;
+$text: #e8e6e1;
+$muted: #8b94a6;
+$accent: #ff5a5f;
+$accent-deep: #c1121f;
+$accent-soft: rgba(229, 72, 77, 0.16);
+
+// Scoped to .auth so it no longer affects other pages' <main>
+.auth {
     min-height: 100vh;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 2rem 1.25rem;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    color: $text;
+    background:
+        radial-gradient(60rem 30rem at 50% -10%, rgba(229, 72, 77, 0.12), transparent 60%),
+        $ink;
 
-    .form-container
-    {
-        min-width:400px;
+    .form-container {
+        width: 100%;
+        max-width: 420px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        padding: 2.5rem 2.25rem;
+        background: $panel;
+        border: 1px solid $line;
+        border-radius: 1rem;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+        animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+        > * { animation: settle 0.7s ease both; }
+        > :nth-child(1) { animation-delay: 0.12s; }
+        > :nth-child(2) { animation-delay: 0.2s; }
+        > :nth-child(3) { animation-delay: 0.28s; }
+        > :nth-child(4) { animation-delay: 0.36s; }
+    }
+
+    h1 {
+        margin: 0;
+        font-family: 'Fraunces', Georgia, serif;
+        font-weight: 600;
+        font-size: 2rem;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+        margin: -0.75rem 0 0;
+        color: $muted;
+        line-height: 1.5;
+        font-size: 0.95rem;
+    }
+
+    form {
         display: flex;
         flex-direction: column;
         gap: 1rem;
     }
-    form{
+
+    .input-group {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.45rem;
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
     }
-    input{
-        border: none;
+
+    input {
+        width: 100%;
+        border: 1px solid $line;
         outline: none;
-        padding-inline: 1rem;
-        border-radius: 0.75rem;
-        padding-block: 0.75rem;
+        padding: 0.8rem 1rem;
+        border-radius: 0.6rem;
+        font: inherit;
+        color: $text;
+        background-color: $field;
+        transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+
+        &::placeholder { color: #5f6a7f; }
+        &:hover { border-color: #3a4660; }
+
+        &:focus {
+            border-color: $accent;
+            background-color: #1e2738;
+            box-shadow: 0 0 0 4px $accent-soft;
+        }
+
+        // keep browser autofill on-theme
+        &:-webkit-autofill {
+            -webkit-text-fill-color: $text;
+            box-shadow: 0 0 0 1000px $field inset;
+            caret-color: $text;
+        }
     }
-    .input-group{
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+
+    .button {
+        margin-top: 0.4rem;
+        padding: 0.95rem 1.25rem;
+        font: inherit;
+        font-weight: 600;
+        border: none;
+        border-radius: 0.6rem;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
     }
-    a{
-        color:rgb(225, 17, 31);
+
+    .primary-button {
+        position: relative;
+        overflow: hidden;
+        color: #fff;
+        background: linear-gradient(135deg, #ff6b6b, $accent-deep);
+        box-shadow: 0 8px 24px rgba(229, 72, 77, 0.30);
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.35) 50%, transparent 65%);
+            transform: translateX(-120%);
+        }
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(229, 72, 77, 0.45);
+            &::after { transform: translateX(120%); transition: transform 0.7s ease; }
+        }
+
+        &:active { transform: translateY(0) scale(0.99); }
+        &:focus-visible { outline: 2px solid $text; outline-offset: 3px; }
+    }
+
+    .form-container > p:last-child {
+        margin: 0;
+        padding-top: 1.25rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: $muted;
+        border-top: 1px solid $line;
+    }
+
+    a {
+        color: $accent;
+        font-weight: 600;
         text-decoration: none;
+        background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+        transition: background-size 0.25s, color 0.2s;
+
+        &:hover { background-size: 100% 1px; color: #ff7b7f; }
+        &:focus-visible { outline: 2px solid $accent; outline-offset: 3px; border-radius: 2px; }
     }
+
+    .form-message {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        line-height: 1.45;
+        border-radius: 0.6rem;
+        border: 1px solid;
+
+        &.error {
+            color: #ff8a8e;
+            background: rgba(229, 72, 77, 0.12);
+            border-color: rgba(229, 72, 77, 0.4);
+        }
+    }
+
+    // Loading state (same <main><h1>Loading...</h1></main>)
+    &.is-loading h1 {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        font-size: 1.25rem;
+        color: $muted;
+
+        &::before {
+            content: "";
+            width: 1.4rem;
+            height: 1.4rem;
+            border: 2px solid $line;
+            border-top-color: $accent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .form-container { padding: 2rem 1.5rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation: none !important;
+            transition: none !important;
+        }
+    }
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(24px) scale(0.985); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes settle {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }

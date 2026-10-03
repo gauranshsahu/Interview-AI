@@ -6,7 +6,8 @@ const tokenBlackListModel = require("../models/blacklist.model")
 
 /**
  * @route registerUserController
- * @description register a new user, expects username, email and password in the request body
+ * @description register a new user, expects username, email and password in the request body.
+ * Does NOT log the user in: they sign in from the login page afterwards.
  * @access Public
  */
 async function registerUserController(req,res)
@@ -21,14 +22,21 @@ async function registerUserController(req,res)
             })
         }
 
-        const isUserAlreadyExists = await userModel.findOne({
-            $or: [ {username: username} , {email} ]
-        })
+        const emailTaken = await userModel.findOne({ email })
 
-        if(isUserAlreadyExists)
+        if(emailTaken)
         {
-            return res.status(400).json({
-                message: "Account already exists with this username or email address"
+            return res.status(409).json({
+                message: "This email is already registered. Try logging in instead."
+            })
+        }
+
+        const usernameTaken = await userModel.findOne({ username })
+
+        if(usernameTaken)
+        {
+            return res.status(409).json({
+                message: "This username is already taken. Please choose another one."
             })
         }
 
@@ -40,16 +48,10 @@ async function registerUserController(req,res)
             password: hash
         })
 
-        const token = jwt.sign(
-            { id: user._id, username: user.username },
-            process.env.JWT_SECRET,
-            { expiresIn: "1d" }
-        )
-
-        res.cookie("token",token)
+        // no token / cookie here on purpose: the user logs in after registering
 
         res.status(201).json({
-            message: "User registered Successfully",
+            message: "Account created successfully. Please log in.",
             user: {
                 id: user._id,
                 username: user.username,
@@ -57,6 +59,17 @@ async function registerUserController(req,res)
             }
         })
     } catch(err) {
+        // two requests with the same email at the same moment: the unique index rejects the second
+        if(err.code === 11000)
+        {
+            const field = Object.keys(err.keyPattern || {})[0]
+            return res.status(409).json({
+                message: field === "username"
+                    ? "This username is already taken. Please choose another one."
+                    : "This email is already registered. Try logging in instead."
+            })
+        }
+
         console.error("Registration error:", err)
         res.status(500).json({
             message: "Internal server error during registration"

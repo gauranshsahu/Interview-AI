@@ -20,13 +20,14 @@ const Login = () => {
     }
 
     if(loading){
-        return (<main><h1>Loading...</h1></main>)
+        return (<main className="auth is-loading"><h1>Loading...</h1></main>)
     }
 
     return (
-        <main>
+        <main className="auth">
             <div className="form-container">
                 <h1>Login</h1>
+                <p className="subtitle">Log in to generate your interview report.</p>
 
                 <form onSubmit={handleSubmit}>
 

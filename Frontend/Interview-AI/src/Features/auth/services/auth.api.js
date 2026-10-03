@@ -15,6 +15,8 @@ export async function register(username, email, password) {
     }
     catch (err) {
         console.log(err);
+        // e.g. "Email is already registered" sent by the backend
+        return { error: err.response?.data?.message || "Registration failed. Please try again." }
     }
 }
 

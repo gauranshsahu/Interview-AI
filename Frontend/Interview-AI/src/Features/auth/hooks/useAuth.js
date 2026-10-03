@@ -21,14 +21,19 @@ export const useAuth = () => {
         }
     }
 
+    // Registering no longer logs the user in: it returns { ok, message } and the
+    // user signs in from the login page afterwards.
     const handleRegister = async ({ username, email, password }) => {
         setLoading(true)
         try{
             const data = await register(username, email, password)
-            setUser(data.user)
+            if(!data) return { ok: false, message: "Registration failed. Please try again." }
+            if(data.error) return { ok: false, message: data.error }
+            return { ok: true }
         }
         catch(err){
             console.error("Register error:", err)
+            return { ok: false, message: "Something went wrong. Please try again." }
         }
         finally{
             setLoading(false)

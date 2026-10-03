@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "../auth.form.scss"
 import { useNavigate,Link } from 'react-router';
 import {useAuth} from '../hooks/useAuth';
 
@@ -8,29 +9,39 @@ const Register = () => {
     const [username,setUsername] = useState("")
     const [email,setEmail] = useState("")
     const [password, setpassword] = useState("")
+    const [error, setError] = useState("")
 
     const {loading,handleRegister} = useAuth()
 
         const handleSubmit = async (e) => {
         e.preventDefault()
-        await handleRegister({username,email,password})
-        navigate("/")
+        setError("")
+        const result = await handleRegister({username,email,password})
+        if(result.ok){
+            navigate("/login")
+        } else {
+            setError(result.message)
+        }
     }
 
     if(loading){
-        return (<main><h1>Loading....</h1></main>)
+        return (<main className="auth is-loading"><h1>Loading....</h1></main>)
     }
 
     return (
-        <main>
+        <main className="auth">
             <div className="form-container">
                 <h1>Register</h1>
+                <p className="subtitle">Create an account to start preparing for interviews.</p>
 
                 <form onSubmit={handleSubmit}>
+
+                    {error && <p className="form-message error" role="alert">{error}</p>}
 
                     <div className="input-group">
                         <label htmlFor="username">Username</label>
                         <input 
+                        value={username}
                         onChange={(e)=>{setUsername(e.target.value)}}
                         type="text" id="username" name='username' placeholder='Enter Username' />
                     </div>
@@ -38,13 +49,15 @@ const Register = () => {
                     <div className="input-group">
                         <label htmlFor="email">Email</label>
                         <input
-                        onChange={(e)=>{setEmail(e.target.value)}}
+                        value={email}
+                        onChange={(e)=>{setEmail(e.target.value); setError("")}}
                         type="email" id="email" name='email' placeholder='Enter Email Address' />
                     </div>
 
                     <div className="input-group">
                         <label htmlFor="password">Password</label>
                         <input 
+                        value={password}
                         onChange={(e)=>{setpassword(e.target.value)}}
                         type="password" id="password" name='password' placeholder='Enter Password' />
                     </div>
