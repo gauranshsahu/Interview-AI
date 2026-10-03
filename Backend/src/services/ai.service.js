@@ -22,9 +22,9 @@ const interviewReportSchema = z.object({
         question: z.string().describe("The technical question can be asked in the interview"),
         intention: z.string().describe("The intention of interviewer behind asking this question"),
         answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
-    })).describe("Behavioral questions that can be asked in the interview along with their intention and how to answer them"),
+    })).describe("Technical questions that can be asked in the interview along with their intention and how to answer them"),
     behavioralQuestions: z.array(z.object({
-        question: z.string().describe("The technical question can be asked in the interview"),
+        question: z.string().describe("The behavioral question can be asked in the interview"),
         intention: z.string().describe("The intention of interviewer behind asking this question"),
         answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
     })).describe("Behavioral questions that can be asked in the interview along with their intention and how to answer them"),
@@ -40,6 +40,13 @@ const interviewReportSchema = z.object({
     title: z.string().describe("The title of the job for which the interview report is generated"),
 })
 
+// zod-to-json-schema only understands zod v3. With zod v4 it returns an EMPTY schema
+// ({ "$schema": ... }), so Gemini was free to invent its own keys. zod v4 ships its own converter.
+const { $schema, ...reportJsonSchema } =
+    typeof z.toJSONSchema === "function"
+        ? z.toJSONSchema(interviewReportSchema)
+        : zodToJsonSchema(interviewReportSchema)
+
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
 
     const prompt = `Generate an interview report for a candidate with the following details:
@@ -52,10 +59,19 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema)
+            responseJsonSchema: reportJsonSchema
         }
     })
-    return JSON.parse(response.text);
+
+    const report = JSON.parse(response.text)
+
+    // fail loudly instead of silently saving an empty report
+    if (typeof report.matchScore !== "number" || !Array.isArray(report.technicalQuestions)) {
+        console.error("Unexpected AI response shape:", response.text)
+        throw new Error("AI returned an unexpected response format")
+    }
+
+    return report
 }
 
 module.exports = generateInterviewReport
