@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import "../auth.form.scss"
 import { useNavigate,Link } from 'react-router';
+import { AuthSkeleton } from '../components/Skeleton';
 import {useAuth} from '../hooks/useAuth';
 
 const Register = () => {
@@ -25,7 +26,7 @@ const Register = () => {
     }
 
     if(loading){
-        return (<main className="auth is-loading"><h1>Loading....</h1></main>)
+        return <AuthSkeleton fields={3} />
     }
 
     return (

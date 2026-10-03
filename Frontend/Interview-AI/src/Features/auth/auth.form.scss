@@ -176,25 +176,6 @@ $accent-soft: rgba(229, 72, 77, 0.16);
         }
     }
 
-    // Loading state (same <main><h1>Loading...</h1></main>)
-    &.is-loading h1 {
-        display: flex;
-        align-items: center;
-        gap: 0.9rem;
-        font-size: 1.25rem;
-        color: $muted;
-
-        &::before {
-            content: "";
-            width: 1.4rem;
-            height: 1.4rem;
-            border: 2px solid $line;
-            border-top-color: $accent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-    }
-
     @media (max-width: 480px) {
         .form-container { padding: 2rem 1.5rem; }
     }
@@ -215,8 +196,4 @@ $accent-soft: rgba(229, 72, 77, 0.16);
 @keyframes settle {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: none; }
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
 }

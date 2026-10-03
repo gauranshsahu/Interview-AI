@@ -2,6 +2,7 @@ import { useAuth } from "../hooks/useAuth";
 import React from "react";
 // import { useNavigate } from "react-router";
 import { Navigate } from "react-router";
+import { HomeSkeleton } from "./Skeleton";
 
 const Protected = ({children}) =>{
 
@@ -9,7 +10,7 @@ const Protected = ({children}) =>{
     // const navigate = useNavigate();
     if(loading)
     {
-        return (<main><h1>Loading...</h1></main>)
+        return <HomeSkeleton />
     }
 
     if(!user){
