@@ -74,6 +74,17 @@ async function generateInterViewReportByIdController(req,res){
     })
 }
 
+/**
+ * @description controller to get all interview reports of logged in user.
+ */
+async function getAllInterviewReportsController(req, res) {
+    const interviewReports = await interviewReportModel.find({ user: req.user.id }).sort({ createdAt: -1 }).select("-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan")
+
+    res.status(200).json({
+        message: "Interview reports fetched successfully.",
+        interviewReports
+    })
+}
 
 // to handle a file in pdf format we use a package called multer npm i multer and to read the content of the pdf we require a one more package npm i pdf-parse
-module.exports = { generateInterviewReportController , generateInterViewReportByIdController}
+module.exports = { generateInterviewReportController , generateInterViewReportByIdController , getAllInterviewReportsController}
