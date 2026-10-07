@@ -7,9 +7,9 @@ const interviewReportModel = require("../models/interviewReport.model")
  * @description controller to generate interview report based on user self description, resume and job description
  */
 
-async function generateInterviewReportController(req,res){
+async function generateInterviewReportController(req, res) {
     try {
-        if(!req.file){
+        if (!req.file) {
             return res.status(400).json({
                 message: "Please upload your resume as a PDF"
             })
@@ -17,7 +17,7 @@ async function generateInterviewReportController(req,res){
 
         const { selfDescription, jobDescription } = req.body
 
-        if(!jobDescription){
+        if (!jobDescription) {
             return res.status(400).json({
                 message: "Please provide a job description"
             })
@@ -41,10 +41,10 @@ async function generateInterviewReportController(req,res){
         })
 
         res.status(201).json({
-            message:"Interview report generated successfully",
+            message: "Interview report generated successfully",
             interviewReport
         })
-    } catch(err) {
+    } catch (err) {
         console.error("Generate interview report error:", err)
         res.status(500).json({
             message: "Failed to generate interview report"
@@ -56,35 +56,55 @@ async function generateInterviewReportController(req,res){
  * 
  * @description Controller to get interview report by interviewId.
  */
-async function generateInterViewReportByIdController(req,res){
-    const { interviewId } = req.params
+async function getInterviewReportByIdController(req, res) {
+    try {
+        const { interviewId } = req.params
 
-    const interviewReport = await interviewReportModel.findOne({ _id: interviewId , user:req.user.id })
+        const interviewReport = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id })
 
-    if(!interviewReport)
-    {
-        return res.status(404).json({
-            message: "Interview report not found."
+        if (!interviewReport) {
+            return res.status(404).json({
+                message: "Interview report not found."
+            })
+        }
+
+        res.status(200).json({
+            message: "Interview report fetched successfully.",
+            interviewReport
+        })
+    } catch (err) {
+        // an invalid ObjectId in the URL throws a CastError
+        if (err.name === "CastError") {
+            return res.status(400).json({
+                message: "Invalid interview id."
+            })
+        }
+
+        console.error("Get interview report error:", err)
+        res.status(500).json({
+            message: "Failed to fetch interview report"
         })
     }
-
-    res.status(200).json({
-        message: "Interview report fetched successfully.",
-        interviewReport
-    })
 }
 
 /**
  * @description controller to get all interview reports of logged in user.
  */
 async function getAllInterviewReportsController(req, res) {
-    const interviewReports = await interviewReportModel.find({ user: req.user.id }).sort({ createdAt: -1 }).select("-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan")
+    try {
+        const interviewReports = await interviewReportModel.find({ user: req.user.id }).sort({ createdAt: -1 }).select("-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillGaps -preparationPlan")
 
-    res.status(200).json({
-        message: "Interview reports fetched successfully.",
-        interviewReports
-    })
+        res.status(200).json({
+            message: "Interview reports fetched successfully.",
+            interviewReports
+        })
+    } catch (err) {
+        console.error("Get all interview reports error:", err)
+        res.status(500).json({
+            message: "Failed to fetch interview reports"
+        })
+    }
 }
 
 // to handle a file in pdf format we use a package called multer npm i multer and to read the content of the pdf we require a one more package npm i pdf-parse
-module.exports = { generateInterviewReportController , generateInterViewReportByIdController , getAllInterviewReportsController}
+module.exports = { generateInterviewReportController, getInterviewReportByIdController, getAllInterviewReportsController }

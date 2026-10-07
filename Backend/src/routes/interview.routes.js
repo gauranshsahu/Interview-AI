@@ -13,14 +13,14 @@ const interviewRouter = express.Router()
  */
 
 // this middleware authuser will forward the request only when the user is loggedIn
-interviewRouter.post("/",authMiddleware.authUser,upload.single("resume"), interviewController.generateInterviewReportController)
+interviewRouter.post("/", authMiddleware.authUser, upload.single("resume"), interviewController.generateInterviewReportController)
 
 /**
  * @route GET /api/interview/report/:interviewId
  * @description get interview report by interviewId
  * @access Private
  */
-interviewRouter.get("/report/:interviewId", authMiddleware.authUser,interviewController.getInterviewReportByIdController)
+interviewRouter.get("/report/:interviewId", authMiddleware.authUser, interviewController.getInterviewReportByIdController)
 
 /**
  * @route GET /api/interview 
