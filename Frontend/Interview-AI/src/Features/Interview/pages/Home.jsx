@@ -1,15 +1,26 @@
 import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
+import { useNavigate } from 'react-router'
+
 const Home = () => {
-  const {loading,generateReport} = useInterview()
+  const { loading, generateReport } = useInterview()
   const [jobDescription, setJobDescription] = useState("")
   const [selfDescription, setSelfDescription] = useState("")
   const [resumeName, setResumeName] = useState("")
+  const resumeInputRef = useRef()
   const [dragging, setDragging] = useState(false)
 
   const handleFile = (file) => {
     if (file && file.type === "application/pdf") setResumeName(file.name)
+  }
+
+  const navigate = useNavigate()
+
+  const handleGenerateReport = async () => {
+    const resumeFile = resumeInputRef.current.files[0]
+    const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+    navigate(`/interview/${data._id}`)
   }
 
   return (
@@ -49,7 +60,7 @@ const Home = () => {
               </svg>
               <span>{resumeName || "Upload resume (PDF) or drop it here"}</span>
             </label>
-            <input hidden type="file" name="resume" id="resume" accept=".pdf" onChange={(e) => handleFile(e.target.files[0])} />
+            <input ref={resumeInputRef} hidden type="file" name="resume" id="resume" accept=".pdf" onChange={(e) => handleFile(e.target.files[0])} />
           </div>
 
           <div className="input-group">
@@ -64,7 +75,7 @@ const Home = () => {
             <span className="counter">{selfDescription.length} characters</span>
           </div>
 
-          <button className="button primary-button">Generate Interview Report</button>
+          <button onClick={handleGenerateReport} className="button primary-button">Generate Interview Report</button>
         </div>
       </div>
     </main>
