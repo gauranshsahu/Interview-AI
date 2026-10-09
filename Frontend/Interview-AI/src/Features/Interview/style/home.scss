@@ -212,6 +212,34 @@ $accent-soft: rgba(229, 72, 77, 0.16);
         }
     }
 
+    .form-error {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        line-height: 1.45;
+        color: #ff8a8e;
+        background: rgba(229, 72, 77, 0.12);
+        border: 1px solid rgba(229, 72, 77, 0.4);
+        border-radius: 0.6rem;
+    }
+
+    .form-hint {
+        font-size: 0.8rem;
+        font-weight: 400;
+        text-align: center;
+        color: $muted;
+    }
+
+    .primary-button:disabled,
+    .primary-button:disabled:hover {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+
+        &::after { display: none; }
+    }
+
     @media (max-width: 760px) {
         .interview-input-group {
             grid-template-columns: 1fr;

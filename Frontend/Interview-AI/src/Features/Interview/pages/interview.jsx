@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router'
 import "../style/interview.scss"
+import { useInterview } from '../hooks/useInterview.js'
+import { InterviewSkeleton } from '../../auth/components/Skeleton.jsx'
 
 const TABS = [
   { id: "technical", label: "Technical questions", key: "technicalQuestions" },
@@ -7,32 +10,10 @@ const TABS = [
   { id: "roadmap", label: "Road Map", key: "preparationPlan" },
 ]
 
-// Assumed item shapes (adjust the field names if your schema differs):
-//   questions:      { question, intention, answer }
-//   skillGaps:      { skill, severity: "low" | "medium" | "high" }  (plain strings also work)
-//   preparationPlan:{ day, focus, tasks: [string] }
-// TODO: remove this sample and pass the real report as the `report` prop.
-const sampleReport = {
-  title: "Software Developer (Full Stack)",
-  matchScore: 85,
-  technicalQuestions: [
-    { question: "How would you design a REST API for a resume analyzer?", intention: "Tests API design, resource modelling and error handling.", answer: "Start from resources (users, resumes, reports), use proper verbs and status codes, then cover validation, auth and pagination." },
-    { question: "Explain how the event loop works in Node.js.", intention: "Checks your understanding of async behaviour behind your Express projects.", answer: "Describe the call stack, callback queue and microtasks, then give an example of why blocking the loop hurts throughput." },
-  ],
-  behavioralQuestions: [
-    { question: "Tell me about a time you received critical client feedback.", intention: "Looks for ownership and how you handle pressure.", answer: "Use STAR: describe the situation, what you changed, and the measurable result." },
-  ],
-  skillGaps: [
-    { skill: "Java Spring Boot (Professional Depth)", severity: "medium" },
-    { skill: "Docker & AWS (Deployment)", severity: "medium" },
-    { skill: "Microservices Architecture", severity: "low" },
-    { skill: "Unit Testing (JUnit/Mockito)", severity: "medium" },
-  ],
-  preparationPlan: [
-    { day: 1, focus: "Node.js internals", tasks: ["Read about the event loop phases", "Build a small queue worker"] },
-    { day: 2, focus: "Caching with Redis", tasks: ["Add Redis caching to a project", "Practice cache invalidation questions"] },
-  ],
-}
+// Shape of the report returned by GET /api/interview/report/:interviewId
+//   questions:       { question, intention, answer }
+//   skillGaps:       { skill, severity: "low" | "medium" | "high" }
+//   preparationPlan: { day, focus, tasks: [string] }
 
 const ScoreRing = ({ score }) => {
   const value = Math.max(0, Math.min(100, Number(score) || 0))
@@ -102,9 +83,39 @@ const RoadMap = ({ items }) => {
   )
 }
 
-const Interview = ({ report: data = sampleReport }) => {
+const NotFound = () => (
+  <main className="interview">
+    <div className="status-card">
+      <h1>Report not found</h1>
+      <p>We couldn't load this interview report. It may have been removed, or it belongs to another account.</p>
+      <Link to="/">Back to home</Link>
+    </div>
+  </main>
+)
+
+const Interview = () => {
+  const { interviewId } = useParams()
+  const { report: loaded, getReportById } = useInterview()
   const [active, setActive] = useState("technical")
-  const report = data.interviewReport ?? data
+  const [failed, setFailed] = useState(false)
+
+  // the report kept in context may belong to a different interview
+  const report = loaded?._id === interviewId ? loaded : null
+
+  useEffect(() => {
+    if (report) return // just generated on the Home page, no need to fetch again
+
+    let ignore = false
+    setFailed(false)
+    getReportById(interviewId).then((data) => {
+      if (!ignore && !data) setFailed(true)
+    })
+
+    return () => { ignore = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interviewId])
+
+  if (!report) return failed ? <NotFound /> : <InterviewSkeleton />
 
   const tab = TABS.find((t) => t.id === active)
   const items = report[tab.key] || []

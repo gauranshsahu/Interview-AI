@@ -54,3 +54,29 @@ export const HomeSkeleton = () => (
         </div>
     </main>
 )
+
+// Matches the interview report page (nav | content | skill gaps)
+export const InterviewSkeleton = () => (
+    <main className="sk-page" role="status" aria-busy="true" aria-label="Loading">
+        <div className="sk-card sk-interview">
+            <div className="sk-side">
+                <Bar w="30%" h="0.75rem" />
+                <Bar w="85%" h="1.4rem" />
+                <Bar w="7rem" h="7rem" r="50%" />
+                {Array.from({ length: 3 }).map((_, i) => <Bar key={i} h="2.8rem" r="0.6rem" />)}
+            </div>
+
+            <div className="sk-main">
+                <Bar w="50%" h="1.9rem" />
+                {Array.from({ length: 4 }).map((_, i) => <Bar key={i} h="4rem" r="0.8rem" />)}
+            </div>
+
+            <div className="sk-side">
+                <Bar w="40%" h="0.8rem" />
+                <div className="sk-chips">
+                    {["7rem", "9rem", "6rem", "8rem"].map((w, i) => <Bar key={i} w={w} h="2rem" r="0.9rem" />)}
+                </div>
+            </div>
+        </div>
+    </main>
+)

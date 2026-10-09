@@ -73,6 +73,34 @@ $shine: #27344a;
     border-bottom: 1px solid $line;
 }
 
+.sk-interview {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr) 300px;
+    gap: 0;
+    max-width: 1320px;
+    height: calc(100vh - 3rem);
+    min-height: 560px;
+    overflow: hidden;
+}
+
+.sk-side,
+.sk-main {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 2rem 1.5rem;
+}
+
+.sk-side:first-child { border-right: 1px solid $line; }
+.sk-side:last-child { border-left: 1px solid $line; }
+.sk-main { padding: 2rem 2.25rem; }
+.sk-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+@media (max-width: 1000px) {
+    .sk-interview { display: flex; flex-direction: column; height: auto; }
+    .sk-side:first-child, .sk-side:last-child { border: none; }
+}
+
 @media (max-width: 760px) {
     .sk-home { grid-template-columns: 1fr; padding: 1.5rem; }
 }

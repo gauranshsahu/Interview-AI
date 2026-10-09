@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router";
 import Login from "./Features/auth/pages/login.jsx";
 import Register from "./Features/auth/pages/register.jsx";
 import Protected from "./Features/auth/components/protected.jsx";
-import Home from "./Features/Interview/pages/home.jsx"
+import Home from "./Features/Interview/pages/Home.jsx"
 import Interview from "./Features/Interview/pages/interview.jsx";
 
 export const router = createBrowserRouter([

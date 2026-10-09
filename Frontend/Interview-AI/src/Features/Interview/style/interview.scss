@@ -445,6 +445,44 @@ $green: #6fcf97;
         p { margin: 0; }
     }
 
+    .status-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.9rem;
+        max-width: 420px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        background: $panel;
+        border: 1px solid $line;
+        border-radius: 1rem;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+        animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+        h1 {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 600;
+            font-size: 1.6rem;
+        }
+
+        p { font-weight: 400; line-height: 1.55; color: $muted; }
+
+        a {
+            margin-top: 0.5rem;
+            padding: 0.8rem 1.4rem;
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 0.6rem;
+            background: linear-gradient(135deg, #ff6b6b, $accent-deep);
+            box-shadow: 0 8px 24px rgba(229, 72, 77, 0.3);
+            transition: transform 0.2s;
+
+            &:hover { transform: translateY(-2px); }
+            &:focus-visible { outline: 2px solid $text; outline-offset: 3px; }
+        }
+    }
+
     // ---------- responsive ----------
     @media (max-width: 1000px) {
         padding: 1rem;
